@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Welcome</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background-color: #000;
+      height: 100vh;
+      overflow: hidden;
+      position: relative;
+      font-family: 'Courier New', Courier, monospace;
+      color: #f00;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .message {
+      font-size: 2em;
+      text-align: center;
+      padding: 20px;
+      border: 3px solid red;
+      border-radius: 20px;
+      box-shadow: 0 0 15px red;
+      text-shadow: 0 0 10px red;
+      animation: flicker 2s infinite alternate;
+      background-color: rgba(0, 0, 0, 0.6);
+    }
+
+    @keyframes flicker {
+      0% { opacity: 0.8; transform: scale(1); }
+      100% { opacity: 1; transform: scale(1.03); }
+    }
+
+    .blood-splat {
+      position: absolute;
+      background: url('https://i.imgur.com/BF6hGzr.png') no-repeat center;
+      background-size: contain;
+      width: 150px;
+      height: 150px;
+      opacity: 0.7;
+    }
+
+    .smoke {
+      position: absolute;
+      width: 100px;
+      height: 100px;
+      background: radial-gradient(ellipse at center, rgba(255,0,0,0.2) 0%, transparent 70%);
+      border-radius: 50%;
+      pointer-events: none;
+      animation: smoke 1.5s forwards;
+    }
+
+    @keyframes smoke {
+      0% { transform: scale(0.5); opacity: 1; }
+      100% { transform: scale(2); opacity: 0; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="message">Welcome in my world bi*tch</div>
+
+  <!-- دم عشوائي -->
+  <script>
+    for (let i = 0; i < 10; i++) {
+      const splat = document.createElement('div');
+      splat.className = 'blood-splat';
+      splat.style.top = Math.random() * 100 + '%';
+      splat.style.left = Math.random() * 100 + '%';
+      splat.style.transform = `rotate(${Math.random() * 360}deg) scale(${0.6 + Math.random()})`;
+      document.body.appendChild(splat);
+    }
+
+    // دخان وضحكة عند الضغط
+    const laugh = new Audio("https://cdn.pixabay.com/audio/2021/08/04/audio_e11c06c2ce.mp3");
+
+    document.body.addEventListener('click', function(e) {
+      const smoke = document.createElement('div');
+      smoke.className = 'smoke';
+      smoke.style.top = `${e.clientY - 50}px`;
+      smoke.style.left = `${e.clientX - 50}px`;
+      document.body.appendChild(smoke);
+      setTimeout(() => smoke.remove(), 1500);
+
+      // شغل الضحكة من جديد في كل نقرة
+      laugh.currentTime = 0;
+      laugh.play();
+    });
+  </script>
+
+  <!-- موسيقى غامضة -->
+  <audio autoplay loop>
+    <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3" type="audio/mpeg">
+    Your browser does not support the audio element.
+  </audio>
+</body>
+</html>
