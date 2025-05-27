@@ -64,6 +64,7 @@
       border-radius: 12px;
       border: 1px solid red;
       box-shadow: 0 0 10px red;
+      z-index: 2;
     }
 
     @keyframes pulse {
@@ -77,6 +78,28 @@
       left: 0;
       z-index: -1;
     }
+
+    #green-text {
+      position: absolute;
+      bottom: 5%;
+      left: 5%;
+      font-size: 1.5em;
+      color: #0f0;
+      white-space: pre-wrap;
+      z-index: 3;
+      animation: fadeIn 1s ease-in-out;
+      display: none;
+    }
+
+    @keyframes fadeIn {
+      from {opacity: 0;}
+      to {opacity: 1;}
+    }
+
+    .blocked {
+      pointer-events: none;
+      user-select: none;
+    }
   </style>
 </head>
 <body>
@@ -88,6 +111,8 @@
 </div>
 
 <div class="countdown" id="countdown">00:30</div>
+
+<div id="green-text"></div>
 
 <canvas id="matrixCanvas"></canvas>
 
@@ -101,6 +126,11 @@
   <source src="https://www.soundjay.com/human/sounds/evil-laugh-1.mp3" type="audio/mpeg">
 </audio>
 
+<!-- صوت إنذار -->
+<audio id="alarm-sound">
+  <source src="https://www.soundjay.com/button/beep-09.mp3" type="audio/mpeg">
+</audio>
+
 <script>
   // Matrix effect
   const canvas = document.getElementById('matrixCanvas');
@@ -108,7 +138,7 @@
   canvas.height = window.innerHeight;
   canvas.width = window.innerWidth;
 
-  const letters = 'АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЫЭЮЯ0123456789';
+  const letters = 'АБВГДЕЖЗИЙКЛМНОПРСТУФХЦЧШЩЫЭЮЯ0123456789';
   const fontSize = 16;
   const columns = canvas.width / fontSize;
   const drops = Array(Math.floor(columns)).fill(1);
@@ -133,7 +163,7 @@
 
   draw();
 
-  // Close system function
+  // إغلاق النظام
   function closeSystem() {
     window.open('', '_self');
     window.close();
@@ -150,19 +180,57 @@
     let mins = String(Math.floor(countdown / 60)).padStart(2, '0');
     let secs = String(countdown % 60).padStart(2, '0');
     countdownEl.textContent = `${mins}:${secs}`;
-    if (countdown <= 0) clearInterval(timer);
+    if (countdown <= 0) {
+      clearInterval(timer);
+      triggerFinalEffects();
+    }
   }, 1000);
 
-  // نافذة التحذير الأمني بعد 10 ثوانٍ
+  // نافذة تحذير بعد 10 ثواني
   setTimeout(() => {
     alert("تحذير أمني: تم اختراق نظامك! يتم تحميل ملفات النظام...");
   }, 10000);
 
   // ضحكة شريرة بعد 15 ثانية
   setTimeout(() => {
-    const laugh = document.getElementById('evil-laugh');
-    laugh.play();
+    document.getElementById('evil-laugh').play();
   }, 15000);
+
+  // التأثيرات النهائية عند انتهاء المؤقت
+  function triggerFinalEffects() {
+    // تكرار نوافذ منبثقة
+    for (let i = 0; i < 5; i++) {
+      setTimeout(() => {
+        alert("تم اختراق جهازك!\nДанные уничтожены.");
+      }, i * 300);
+    }
+
+    // صوت إنذار
+    const alarm = document.getElementById('alarm-sound');
+    alarm.loop = true;
+    alarm.play();
+
+    // تعطيل التفاعل
+    document.body.classList.add('blocked');
+
+    // كتابة خضراء تظهر بأسلوب هاكرز
+    const greenText = document.getElementById('green-text');
+    greenText.style.display = 'block';
+    greenText.textContent = generateGreenText();
+  }
+
+  // إنشاء كتابة خضراء عشوائية
+  function generateGreenText() {
+    const lines = [];
+    for (let i = 0; i < 30; i++) {
+      let line = '';
+      for (let j = 0; j < 50; j++) {
+        line += Math.random() > 0.5 ? '1' : '0';
+      }
+      lines.push(line);
+    }
+    return lines.join('\n');
+  }
 </script>
 
 </body>
