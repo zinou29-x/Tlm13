@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Welcome</title>
+  <style>
+    body {
+      margin: 0;
+      background-color: #000;
+      color: #0f0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .fade-in {
+      opacity: 0;
+      animation: fadeIn 2s forwards ease-in;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    #zdLogo {
+      width: 120px;
+      margin-bottom: 20px;
+      filter: drop-shadow(0 0 10px #00e6c3);
+      animation: glow 2s infinite alternate;
+    }
+
+    @keyframes glow {
+      0% { filter: drop-shadow(0 0 10px #00e6c3); }
+      100% { filter: drop-shadow(0 0 20px #00ffd5); }
+    }
+
+    #evilRabbit {
+      width: 300px;
+      margin-bottom: 20px;
+      border-radius: 15px;
+      box-shadow: 0 0 25px red;
+      animation: fadeIn 2.5s ease-in forwards;
+    }
+
+    #sign {
+      background-color: rgba(0, 255, 0, 0.1);
+      padding: 20px 30px;
+      border: 2px solid #0f0;
+      border-radius: 20px;
+      font-size: 1.8em;
+      text-shadow: 0 0 10px #0f0;
+      animation: fadeIn 3s ease-in forwards;
+      opacity: 0;
+    }
+  </style>
+</head>
+<body>
+  <img id="zdLogo" src="https://upload.wikimedia.org/wikipedia/commons/7/73/Zdnet_logo.svg" alt="ZD Logo" class="fade-in" />
+  
+  <!-- ✅ أرنب شرير جديد -->
+  <img id="evilRabbit" src="https://i.imgur.com/k8xQ0bt.png" alt="Evil Rabbit" />
+
+  <div id="sign">Welcome in my world bi*tch</div>
+
+  <audio autoplay loop>
+    <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3" type="audio/mpeg">
+    Your browser does not support the audio element.
+  </audio>
+</body>
+</html>
