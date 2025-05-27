@@ -78,12 +78,12 @@
 <canvas id="matrixCanvas"></canvas>
 
 <audio autoplay loop>
-  <source src="evil-laugh.mp3" type="audio/mpeg">
+  <source src="https://files.freemusicarchive.org/storage-freemusicarchive-org/music/no_curator/Komiku/The_Worst_Seller/Creepy_Dark_Ambient.mp3" type="audio/mpeg">
   Your browser does not support the audio tag.
 </audio>
 
 <script>
-  // Matrix effect
+  // Matrix background
   const canvas = document.getElementById('matrixCanvas');
   const ctx = canvas.getContext('2d');
   canvas.height = window.innerHeight;
@@ -114,12 +114,10 @@
 
   draw();
 
-  // Fake close system
+  // Fake close button
   function closeSystem() {
     window.open('', '_self');
     window.close();
-
-    // Fallback if close fails
     setTimeout(() => {
       window.location.href = 'about:blank';
     }, 500);
