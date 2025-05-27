@@ -122,24 +122,22 @@
       }
     }
 
-    document.body.addEventListener("click", () => {
+    document.body.addEventListener("click", async () => {
       if (activated) return;
       activated = true;
 
-      // إخفاء التحذير
       warning.style.display = "none";
-
-      // تشغيل الضحكة ثم الموسيقى
-      laugh.play();
-      laugh.onended = () => music.play();
-
-      // إظهار الخلفية Matrix
       matrixBg.style.display = "block";
       setupMatrix();
       setInterval(drawMatrix, 35);
-
-      // إظهار رسالة الاختراق
       popup.style.display = "block";
+
+      try {
+        await laugh.play(); // تشغيل الضحكة أولاً
+        music.play();       // ثم تشغيل الموسيقى
+      } catch (error) {
+        console.error("خطأ في تشغيل الصوت:", error);
+      }
     });
 
     window.addEventListener("resize", setupMatrix);
