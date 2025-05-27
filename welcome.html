@@ -1,85 +1,103 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Hacked</title>
   <style>
     body {
       margin: 0;
       background: black;
       overflow: hidden;
-      color: #0f0;
       font-family: 'Courier New', Courier, monospace;
     }
 
-    .hacked-message {
-      position: absolute;
-      top: 20px;
-      left: 50%;
-      transform: translateX(-50%) rotate(-5deg);
-      font-size: 2em;
-      font-style: italic;
-      color: #f00;
-      text-shadow: 0 0 10px red;
-      z-index: 1000;
-      animation: fadeIn 2s ease forwards;
-    }
-
-    .matrix {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      background: black;
-      overflow: hidden;
-      display: none;
-      z-index: 999;
-    }
-
-    canvas {
-      display: block;
-    }
-
-    .warning {
+    .centered {
       position: absolute;
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
       font-size: 3em;
-      color: #8b0000;
+      color: #ff0000;
       text-shadow: 0 0 20px red;
       animation: flicker 2s infinite alternate;
+      z-index: 1000;
     }
 
     @keyframes flicker {
       0% { opacity: 0.7; transform: scale(1); }
       100% { opacity: 1; transform: scale(1.05); }
     }
+
+    .matrix {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      display: none;
+      z-index: 500;
+    }
+
+    canvas {
+      display: block;
+    }
+
+    .popup {
+      display: none;
+      position: fixed;
+      top: 30px;
+      left: 50%;
+      transform: translateX(-50%) rotate(-5deg);
+      background-color: rgba(0, 0, 0, 0.9);
+      border: 3px solid #f00;
+      color: #f00;
+      padding: 30px;
+      font-size: 2em;
+      box-shadow: 0 0 20px red;
+      text-align: center;
+      z-index: 1500;
+      animation: fadeIn 1s ease forwards;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateX(-50%) translateY(-20px) rotate(-5deg); }
+      to { opacity: 1; transform: translateX(-50%) translateY(0) rotate(-5deg); }
+    }
   </style>
 </head>
 <body>
 
-  <div class="hacked-message">You have been successfully hacked.</div>
-  <div class="warning">I can see u</div>
+  <div class="centered" id="warning">I can see u</div>
+
+  <div class="popup" id="popup">You have been successfully hacked.</div>
+
   <div class="matrix" id="matrix-bg">
     <canvas id="matrixCanvas"></canvas>
   </div>
 
+  <!-- ضحكة شريرة -->
+  <audio id="laugh">
+    <source src="https://cdn.pixabay.com/audio/2021/08/04/audio_e11c06c2ce.mp3" type="audio/mpeg">
+  </audio>
+
   <!-- موسيقى غامضة -->
-  <audio id="bgMusic">
-    <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
+  <audio id="bgMusic" loop>
+    <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3" type="audio/mpeg">
   </audio>
 
   <script>
+    const laugh = document.getElementById("laugh");
     const music = document.getElementById("bgMusic");
     const matrixBg = document.getElementById("matrix-bg");
     const canvas = document.getElementById("matrixCanvas");
     const ctx = canvas.getContext("2d");
+    const warning = document.getElementById("warning");
+    const popup = document.getElementById("popup");
 
-    // Matrix rain effect
+    let activated = false;
+
+    // Matrix setup
     const characters = "01";
     const fontSize = 14;
-    let columns;
-    let drops = [];
+    let columns, drops;
 
     function setupMatrix() {
       canvas.height = window.innerHeight;
@@ -105,10 +123,23 @@
     }
 
     document.body.addEventListener("click", () => {
+      if (activated) return;
+      activated = true;
+
+      // إخفاء التحذير
+      warning.style.display = "none";
+
+      // تشغيل الضحكة ثم الموسيقى
+      laugh.play();
+      laugh.onended = () => music.play();
+
+      // إظهار الخلفية Matrix
       matrixBg.style.display = "block";
       setupMatrix();
       setInterval(drawMatrix, 35);
-      music.play();
+
+      // إظهار رسالة الاختراق
+      popup.style.display = "block";
     });
 
     window.addEventListener("resize", setupMatrix);
