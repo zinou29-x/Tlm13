@@ -2,72 +2,116 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>I Can See U</title>
+  <title>Hacked</title>
   <style>
     body {
-      background-color: #000;
-      color: #8b0000;
-      font-family: 'Courier New', Courier, monospace;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      overflow: hidden;
       margin: 0;
+      background: black;
+      overflow: hidden;
+      color: #0f0;
+      font-family: 'Courier New', Courier, monospace;
+    }
+
+    .hacked-message {
+      position: absolute;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%) rotate(-5deg);
+      font-size: 2em;
+      font-style: italic;
+      color: #f00;
+      text-shadow: 0 0 10px red;
+      z-index: 1000;
+      animation: fadeIn 2s ease forwards;
+    }
+
+    .matrix {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background: black;
+      overflow: hidden;
+      display: none;
+      z-index: 999;
+    }
+
+    canvas {
+      display: block;
     }
 
     .warning {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
       font-size: 3em;
+      color: #8b0000;
       text-shadow: 0 0 20px red;
       animation: flicker 2s infinite alternate;
     }
 
     @keyframes flicker {
-      0% { opacity: 0.8; transform: scale(1); }
+      0% { opacity: 0.7; transform: scale(1); }
       100% { opacity: 1; transform: scale(1.05); }
-    }
-
-    .popup {
-      display: none;
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      background-color: rgba(30, 0, 0, 0.9);
-      padding: 40px;
-      border: 3px solid red;
-      border-radius: 20px;
-      box-shadow: 0 0 20px red;
-      color: #f00;
-      font-size: 1.8em;
-      text-align: center;
-      z-index: 9999;
-      animation: fadeIn 1s ease forwards;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translate(-50%, -60%) scale(0.9); }
-      to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
     }
   </style>
 </head>
 <body>
 
+  <div class="hacked-message">You have been successfully hacked.</div>
   <div class="warning">I can see u</div>
+  <div class="matrix" id="matrix-bg">
+    <canvas id="matrixCanvas"></canvas>
+  </div>
 
-  <div class="popup" id="popup">You have been successfully hacked.</div>
-
-  <!-- ضحكة شريرة عند الدخول -->
-  <audio autoplay>
-    <source src="https://cdn.pixabay.com/audio/2021/08/04/audio_e11c06c2ce.mp3" type="audio/mpeg">
-    Your browser does not support the audio element.
+  <!-- موسيقى غامضة -->
+  <audio id="bgMusic">
+    <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
   </audio>
 
   <script>
-    document.body.addEventListener("click", function () {
-      const popup = document.getElementById("popup");
-      popup.style.display = "block";
+    const music = document.getElementById("bgMusic");
+    const matrixBg = document.getElementById("matrix-bg");
+    const canvas = document.getElementById("matrixCanvas");
+    const ctx = canvas.getContext("2d");
+
+    // Matrix rain effect
+    const characters = "01";
+    const fontSize = 14;
+    let columns;
+    let drops = [];
+
+    function setupMatrix() {
+      canvas.height = window.innerHeight;
+      canvas.width = window.innerWidth;
+      columns = canvas.width / fontSize;
+      drops = Array.from({ length: columns }).fill(1);
+    }
+
+    function drawMatrix() {
+      ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = "#0F0";
+      ctx.font = fontSize + "px monospace";
+
+      for (let i = 0; i < drops.length; i++) {
+        const text = characters[Math.floor(Math.random() * characters.length)];
+        ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+        if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+          drops[i] = 0;
+        }
+        drops[i]++;
+      }
+    }
+
+    document.body.addEventListener("click", () => {
+      matrixBg.style.display = "block";
+      setupMatrix();
+      setInterval(drawMatrix, 35);
+      music.play();
     });
+
+    window.addEventListener("resize", setupMatrix);
   </script>
 
 </body>
