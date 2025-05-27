@@ -2,37 +2,37 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Dark Hack</title>
+  <title>Hacked Interface</title>
   <style>
     body {
       margin: 0;
       background: black;
       overflow: hidden;
       font-family: 'Courier New', Courier, monospace;
-      color: #f00;
+      color: red;
     }
 
-    .center-message {
+    #mainMessage {
       position: absolute;
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
       font-size: 3em;
-      color: darkred;
+      color: crimson;
       text-shadow: 0 0 20px red;
       z-index: 10;
     }
 
-    .hacked-message {
+    #hackedText {
       display: none;
       position: absolute;
-      top: 30px;
-      left: 50%;
-      transform: translateX(-50%) rotate(-6deg);
+      top: 20px;
+      left: 10px;
+      transform: rotate(-8deg);
       font-size: 2em;
       color: #0f0;
-      text-shadow: 0 0 15px lime;
-      z-index: 15;
+      text-shadow: 0 0 10px #0f0;
+      z-index: 20;
     }
 
     canvas {
@@ -46,23 +46,10 @@
       position: fixed;
       width: 100%;
       height: 100%;
-      background: radial-gradient(circle at 50% 50%, rgba(255,0,0,0.1), transparent 70%);
-      mix-blend-mode: screen;
+      background: radial-gradient(circle, rgba(255,0,0,0.1), transparent 70%);
       z-index: 5;
       animation: pulse 4s infinite alternate;
-    }
-
-    .red-flash {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(255, 0, 0, 0.1);
-      z-index: 8;
       pointer-events: none;
-      opacity: 0;
-      animation: flashRed 5s infinite;
     }
 
     @keyframes pulse {
@@ -70,96 +57,97 @@
       100% { opacity: 0.5; }
     }
 
-    @keyframes flashRed {
-      0%, 95% { opacity: 0; }
-      96%, 100% { opacity: 0.08; }
+    .flash {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      background: rgba(255,0,0,0.05);
+      z-index: 6;
+      animation: flashAnim 6s infinite;
+      pointer-events: none;
+    }
+
+    @keyframes flashAnim {
+      0%, 98% { opacity: 0; }
+      99%, 100% { opacity: 0.08; }
     }
   </style>
 </head>
 <body>
 
-  <div class="center-message" id="mainText">I can see u</div>
-  <div class="hacked-message" id="hackedText">You have been successfully hacked.</div>
-  <div class="smoke"></div>
-  <div class="red-flash"></div>
-  <canvas id="matrix"></canvas>
+<div id="mainMessage">I can see u</div>
+<div id="hackedText">You have been successfully hacked.</div>
+<div class="smoke"></div>
+<div class="flash"></div>
+<canvas id="matrixCanvas"></canvas>
 
-  <!-- صوت ضحكة -->
-  <audio id="evilLaugh">
-    <source src="https://cdn.pixabay.com/audio/2021/08/04/audio_e11c06c2ce.mp3" type="audio/mpeg">
-  </audio>
+<!-- الضحكة -->
+<audio id="laughAudio" preload="auto">
+  <source src="https://cdn.pixabay.com/audio/2021/08/04/audio_e11c06c2ce.mp3" type="audio/mpeg">
+</audio>
 
-  <!-- موسيقى خلفية -->
-  <audio id="bgMusic" loop>
-    <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3" type="audio/mpeg">
-  </audio>
+<!-- الموسيقى -->
+<audio id="bgMusic" preload="auto" loop>
+  <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3" type="audio/mpeg">
+</audio>
 
-  <!-- صوت كتابة -->
-  <audio id="typingSound" loop>
-    <source src="https://cdn.pixabay.com/audio/2022/03/15/audio_4149889f7a.mp3" type="audio/mpeg">
-  </audio>
+<script>
+  const laughAudio = document.getElementById("laughAudio");
+  const bgMusic = document.getElementById("bgMusic");
+  const mainMessage = document.getElementById("mainMessage");
+  const hackedText = document.getElementById("hackedText");
+  const canvas = document.getElementById("matrixCanvas");
+  const ctx = canvas.getContext("2d");
 
-  <script>
-    const canvas = document.getElementById("matrix");
-    const ctx = canvas.getContext("2d");
+  let started = false;
+  let columns, drops;
+  const fontSize = 14;
+  const letters = "01";
 
-    const evilLaugh = document.getElementById("evilLaugh");
-    const bgMusic = document.getElementById("bgMusic");
-    const typingSound = document.getElementById("typingSound");
-    const mainText = document.getElementById("mainText");
-    const hackedText = document.getElementById("hackedText");
+  function setupMatrix() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    columns = Math.floor(canvas.width / fontSize);
+    drops = Array(columns).fill(1);
+  }
 
-    let started = false;
+  function drawMatrix() {
+    ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = "#0f0";
+    ctx.font = fontSize + "px monospace";
 
-    const chars = "01";
-    const fontSize = 14;
-    let columns;
-    let drops = [];
+    for (let i = 0; i < drops.length; i++) {
+      const char = letters[Math.floor(Math.random() * letters.length)];
+      ctx.fillText(char, i * fontSize, drops[i] * fontSize);
 
-    function setupMatrix() {
-      canvas.height = window.innerHeight;
-      canvas.width = window.innerWidth;
-      columns = canvas.width / fontSize;
-      drops = Array.from({ length: columns }).fill(1);
-    }
-
-    function drawMatrix() {
-      ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-      ctx.fillStyle = "#0f0";
-      ctx.font = fontSize + "px monospace";
-
-      for (let i = 0; i < drops.length; i++) {
-        const char = chars[Math.floor(Math.random() * chars.length)];
-        ctx.fillText(char, i * fontSize, drops[i] * fontSize);
-
-        if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
-          drops[i] = 0;
-        }
-        drops[i]++;
+      if (drops[i] * fontSize > canvas.height && Math.random() > 0.95) {
+        drops[i] = 0;
       }
+      drops[i]++;
     }
+  }
 
-    window.addEventListener("resize", setupMatrix);
+  window.addEventListener("resize", setupMatrix);
 
-    document.body.addEventListener("click", async () => {
-      if (started) return;
-      started = true;
+  document.body.addEventListener("click", async () => {
+    if (started) return;
+    started = true;
 
-      mainText.style.display = "none";
-      hackedText.style.display = "block";
-      setupMatrix();
-      setInterval(drawMatrix, 40);
+    mainMessage.style.display = "none";
+    hackedText.style.display = "block";
 
-      try {
-        await evilLaugh.play();
-        typingSound.play();
-        bgMusic.play();
-      } catch (err) {
-        console.error("Audio play error:", err);
-      }
-    });
-  </script>
+    setupMatrix();
+    setInterval(drawMatrix, 40);
+
+    try {
+      await laughAudio.play();
+      await bgMusic.play();
+    } catch (e) {
+      console.log("AutoPlay Blocked. Tap again.");
+    }
+  });
+</script>
 
 </body>
 </html>
