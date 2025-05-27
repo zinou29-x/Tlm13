@@ -1,153 +1,91 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
-  <meta charset="UTF-8" />
-  <title>Hacked Interface</title>
+  <meta charset="UTF-8">
+  <title>Вас взломали!</title>
   <style>
     body {
       margin: 0;
-      background: black;
       overflow: hidden;
+      background: black;
+      color: #00ff00;
       font-family: 'Courier New', Courier, monospace;
-      color: red;
     }
 
-    #mainMessage {
+    .message {
       position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
+      top: 40%;
+      width: 100%;
+      text-align: center;
       font-size: 3em;
-      color: crimson;
-      text-shadow: 0 0 20px red;
-      z-index: 10;
+      animation: flicker 1s infinite;
+      color: red;
+      text-shadow: 0 0 10px red, 0 0 20px crimson;
     }
 
-    #hackedText {
-      display: none;
+    @keyframes flicker {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+
+    .matrix {
       position: absolute;
-      top: 20px;
-      left: 10px;
-      transform: rotate(-8deg);
-      font-size: 2em;
-      color: #0f0;
-      text-shadow: 0 0 10px #0f0;
-      z-index: 20;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      top: 0;
+      left: 0;
     }
 
     canvas {
-      position: fixed;
-      top: 0;
-      left: 0;
-      z-index: 1;
-    }
-
-    .smoke {
-      position: fixed;
-      width: 100%;
-      height: 100%;
-      background: radial-gradient(circle, rgba(255,0,0,0.1), transparent 70%);
-      z-index: 5;
-      animation: pulse 4s infinite alternate;
-      pointer-events: none;
-    }
-
-    @keyframes pulse {
-      0% { opacity: 0.2; }
-      100% { opacity: 0.5; }
-    }
-
-    .flash {
-      position: fixed;
-      width: 100%;
-      height: 100%;
-      background: rgba(255,0,0,0.05);
-      z-index: 6;
-      animation: flashAnim 6s infinite;
-      pointer-events: none;
-    }
-
-    @keyframes flashAnim {
-      0%, 98% { opacity: 0; }
-      99%, 100% { opacity: 0.08; }
+      display: block;
     }
   </style>
 </head>
 <body>
+  <div class="message">Вас взломали!</div>
+  <div class="matrix"><canvas id="matrixCanvas"></canvas></div>
 
-<div id="mainMessage">I can see u</div>
-<div id="hackedText">You have been successfully hacked.</div>
-<div class="smoke"></div>
-<div class="flash"></div>
-<canvas id="matrixCanvas"></canvas>
+  <audio autoplay loop>
+    <source src="evil-laugh.mp3" type="audio/mpeg">
+    Your browser does not support the audio element.
+  </audio>
 
-<!-- الضحكة -->
-<audio id="laughAudio" preload="auto">
-  <source src="https://cdn.pixabay.com/audio/2021/08/04/audio_e11c06c2ce.mp3" type="audio/mpeg">
-</audio>
+  <script>
+    // Matrix effect
+    const canvas = document.getElementById('matrixCanvas');
+    const ctx = canvas.getContext('2d');
 
-<!-- الموسيقى -->
-<audio id="bgMusic" preload="auto" loop>
-  <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3" type="audio/mpeg">
-</audio>
-
-<script>
-  const laughAudio = document.getElementById("laughAudio");
-  const bgMusic = document.getElementById("bgMusic");
-  const mainMessage = document.getElementById("mainMessage");
-  const hackedText = document.getElementById("hackedText");
-  const canvas = document.getElementById("matrixCanvas");
-  const ctx = canvas.getContext("2d");
-
-  let started = false;
-  let columns, drops;
-  const fontSize = 14;
-  const letters = "01";
-
-  function setupMatrix() {
-    canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
-    columns = Math.floor(canvas.width / fontSize);
-    drops = Array(columns).fill(1);
-  }
+    canvas.width = window.innerWidth;
 
-  function drawMatrix() {
-    ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-    ctx.fillStyle = "#0f0";
-    ctx.font = fontSize + "px monospace";
+    const letters = 'АБВГДЕЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ0123456789';
+    const fontSize = 14;
+    const columns = canvas.width / fontSize;
+    const drops = Array.from({ length: columns }).fill(1);
 
-    for (let i = 0; i < drops.length; i++) {
-      const char = letters[Math.floor(Math.random() * letters.length)];
-      ctx.fillText(char, i * fontSize, drops[i] * fontSize);
+    function drawMatrix() {
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      if (drops[i] * fontSize > canvas.height && Math.random() > 0.95) {
-        drops[i] = 0;
+      ctx.fillStyle = '#0F0';
+      ctx.font = `${fontSize}px monospace`;
+
+      for (let i = 0; i < drops.length; i++) {
+        const text = letters[Math.floor(Math.random() * letters.length)];
+        ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+        if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+          drops[i] = 0;
+        }
+
+        drops[i]++;
       }
-      drops[i]++;
+
+      requestAnimationFrame(drawMatrix);
     }
-  }
 
-  window.addEventListener("resize", setupMatrix);
-
-  document.body.addEventListener("click", async () => {
-    if (started) return;
-    started = true;
-
-    mainMessage.style.display = "none";
-    hackedText.style.display = "block";
-
-    setupMatrix();
-    setInterval(drawMatrix, 40);
-
-    try {
-      await laughAudio.play();
-      await bgMusic.play();
-    } catch (e) {
-      console.log("AutoPlay Blocked. Tap again.");
-    }
-  });
-</script>
-
+    drawMatrix();
+  </script>
 </body>
 </html>
