@@ -16,6 +16,8 @@
     }
 
     .glass-box {
+      <button onclick="startAudio()">تشغيل الصوت</button>
+    
       position: absolute;
       top: 20%;
       left: 10%;
@@ -137,6 +139,17 @@
   const ctx = canvas.getContext('2d');
   canvas.height = window.innerHeight;
   canvas.width = window.innerWidth;
+  function startAudio() {
+  const music = document.getElementById('bg-music');
+  const laugh = document.getElementById('evil-laugh');
+
+  music.volume = 0.5;
+  laugh.volume = 1;
+
+  music.play().catch(() => {});
+  laugh.play().catch(() => {});
+}
+
 
   const letters = 'АБВГДЕЖЗИЙКЛМНОПРСТУФХЦЧШЩЫЭЮЯ0123456789';
   const fontSize = 16;
